@@ -1,5 +1,6 @@
 package com.devrobin.locationservice.MVVM_ROOM.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -17,13 +18,13 @@ public class LocationData {
 //    @SerializedName("areaName")
 //    private String areaName;
 
-    @SerializedName("lat")
+    @ColumnInfo(name = "lat")
     private double lat;
 
-    @SerializedName("lng")
+    @ColumnInfo(name = "lng")
     private double lng;
 
-    @SerializedName("timestamp")
+    @ColumnInfo(name = "timestamp")
     private long timestamp;
 
     public LocationData(double lat, double lng, long timestamp) {
