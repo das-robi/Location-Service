@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnStart = findViewById(R.id.btnStart);
         btnStop = findViewById(R.id.btnStop);
+        btnClear = findViewById(R.id.btnClear);
         tvStatus = findViewById(R.id.tvStatus);
         tvLatest = findViewById(R.id.tvLatest);
         recyclerView = findViewById(R.id.recyclerView);
@@ -88,6 +89,13 @@ public class MainActivity extends AppCompatActivity {
                 StopLocationService();
 
             }});
+
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DeleteLocations();
+            }
+        });
 
 
         locationAdapter = new LocationAdapter();
@@ -144,12 +152,10 @@ public class MainActivity extends AppCompatActivity {
                                 locationData.getTemperature(),
                                 locationData.getHumidity() != null ? locationData.getHumidity() : "N/A"));
 
-                        tvWeather.setText(data.toString());
                     }
                     else {
                         data.append("Loading Weather...");
                     }
-
 
                     //Date & time
                     data.append(dateFormat.format(new Date(locationData.getTimestamp())));
@@ -363,6 +369,18 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
 
+    }
+
+    private void DeleteLocations() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Clear All Data?")
+                .setMessage("This will permanently delete all saved locations. Continue?")
+                .setPositiveButton("Yes, Delete All", (dialog, which) -> {
+                    locationViewModel.DeleteLocations();
+                    Toast.makeText(this, "🗑️ All data cleared", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

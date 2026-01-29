@@ -151,7 +151,12 @@ public class LocationRepository {
 
     //Delete Locations
     public void DeleteLocations(){
-        locationDAO.DeleteLocation();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                locationDAO.DeleteLocation();
+            }
+        });
     }
 
     public void ShutDown(){
