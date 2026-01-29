@@ -65,11 +65,31 @@ public class LocationForegroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        startForeground(NOTIFICATION_ID, CreateNotification("Starting Location Traking..."));
+        startForeground(NOTIFICATION_ID, CreateNotification("Starting Location Tracking..."));
 
         startLocationUpdates();
 
         return START_STICKY;
+    }
+
+    public void createLocationCallback(){
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+
+                if (locationResult == null){
+                    return;
+                }
+
+                Location location = locationResult.getLastLocation();
+                if (location != null){
+                    handleLocationUpdate(location);
+                }
+
+            }
+        };
+
     }
 
 
@@ -91,6 +111,7 @@ public class LocationForegroundService extends Service {
         )
                 .setMinUpdateIntervalMillis(FASTEST_TIME)
                 .setWaitForAccurateLocation(true)
+                .setMaxUpdateDelayMillis(0)
                 .build();
 
 
@@ -100,28 +121,7 @@ public class LocationForegroundService extends Service {
                 Looper.getMainLooper()
         );
 
-        UpdateNotification("Location Tracking active");
-    }
-
-    public void createLocationCallback(){
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-
-                if (locationResult == null){
-                    Log.d("Tag", "LocationResult is null");
-                    return;
-                }
-
-                Location location = locationResult.getLastLocation();
-                if (location != null){
-                    handleLocationUpdate(location);
-                }
-
-            }
-        };
-
+        UpdateNotification("Tracking your location..");
     }
 
     private void handleLocationUpdate(Location location) {
@@ -221,7 +221,7 @@ public class LocationForegroundService extends Service {
 
 
         //Show Toast with place name
-        String toastMessage = String.format("%s\nLat: %.6f, Lon: %.6f", placeName, latitude, longitude);
+        String toastMessage = String.format("%s\nLat: %.4f, Lon: %.4f", placeName, latitude, longitude);
         Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
 
 
@@ -268,11 +268,11 @@ public class LocationForegroundService extends Service {
         );
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Location Active ->")
+                .setContentTitle("Location Tracker")
                 .setContentText(contentTxt)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setOngoing(true)
                 .setContentIntent(pendingIntent)
+                .setOngoing(true)
                 .setPriority(Notification.PRIORITY_LOW)
                 .build();
     }

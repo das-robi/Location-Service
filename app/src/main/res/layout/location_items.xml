@@ -18,28 +18,28 @@
             android:id="@+id/tvPlaceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ashuliya"
+            android:text=""
             android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tvCoordinates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lat: 8939493"
+            android:text=""
             android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tvWeather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="38 C"
+            android:text=""
             android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20:57"
+            android:text=""
             android:textSize="15sp"/>
 
     </LinearLayout>

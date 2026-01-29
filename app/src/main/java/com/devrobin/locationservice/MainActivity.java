@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.devrobin.locationservice.MVVM.LocationViewModel;
 import com.devrobin.locationservice.MVVM.LocationData;
 import com.devrobin.locationservice.RetrofiteServices.WeatherResponse;
-import com.devrobin.locationservice.utils.Credentials;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Widgets
     private Button btnStart, btnStop, btnClear;
-    private TextView tvStatus, tvLatest, tvCount, tvWeather, tvCoordinates;
+    private TextView tvStatus, tvLatest, tvWeather;
     private RecyclerView recyclerView;
 
     private LocationAdapter locationAdapter;
@@ -66,12 +65,6 @@ public class MainActivity extends AppCompatActivity {
         tvLatest = findViewById(R.id.tvLatest);
         recyclerView = findViewById(R.id.recyclerView);
         tvWeather = findViewById(R.id.tvWeather);
-        tvCoordinates = findViewById(R.id.tvCoordinates);
-
-        locationAdapter = new LocationAdapter();
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(locationAdapter);
 
         //ViewModel
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
@@ -96,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
 
             }});
 
+
+        locationAdapter = new LocationAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(locationAdapter);
     }
 
     private void observeLocations() {
@@ -120,34 +117,34 @@ public class MainActivity extends AppCompatActivity {
 
                 if (locationData != null){
 
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm:ss a", Locale.getDefault());
 
                     StringBuilder data = new StringBuilder();
 
                     //Check City
                     if (locationData.getPlaceName() != null && !locationData.getPlaceName().isEmpty()){
-                        data.append(locationData.getPlaceName());
+                        data.append(locationData.getPlaceName()).append("\n\n");
                     }
 
                     //Check Address
                     if (locationData.getAddress() != null && !locationData.getAddress().isEmpty()){
-                        data.append(locationData.getAddress());
+                        data.append(locationData.getAddress()).append("\n\n");
                     }
 
 
-
-
                     data.append(String.format(Locale.getDefault(),
-                            "🎯 Accuracy: %.0f meters\n\n",
+                            "Accuracy: %.0f meters\n\n",
                             locationData.getAccuracy()));
 
-                    // Weather (if available)
+
                     if (locationData.getWeatherDesc() != null && locationData.getTemperature() != null) {
 
                         data.append(String.format("%s  %s Humidity: %s\n\n",
                                 locationData.getWeatherDesc(),
                                 locationData.getTemperature(),
                                 locationData.getHumidity() != null ? locationData.getHumidity() : "N/A"));
+
+                        tvWeather.setText(data.toString());
                     }
                     else {
                         data.append("Loading Weather...");
@@ -347,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean GPSEnabled() {
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        return locationManager != null && locationManager.isProviderEnabled(locationManager.GPS_PROVIDER);
+        return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
     }
 

@@ -90,24 +90,8 @@ public class WeatherResponse {
             return temp;
         }
 
-        public void setTemp(double temp) {
-            this.temp = temp;
-        }
-
         public int getHumidity() {
             return humidity;
-        }
-
-        public void setHumidity(int humidity) {
-            this.humidity = humidity;
-        }
-
-        public int getPressure() {
-            return pressure;
-        }
-
-        public void setPressure(int pressure) {
-            this.pressure = pressure;
         }
     }
 }

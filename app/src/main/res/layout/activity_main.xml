@@ -136,16 +136,6 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="12dp">
 
-            <TextView
-                android:id="@+id/tvCount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total Locations: 0"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#212121" />
-
             <Button
                 android:id="@+id/btnClear"
                 android:layout_width="wrap_content"
@@ -176,6 +166,8 @@
             app:cardCornerRadius="8dp" />
 
     </LinearLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

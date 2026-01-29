@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import com.devrobin.locationservice.RetrofiteServices.RetrofitClient;
 import com.devrobin.locationservice.RetrofiteServices.WeatherResponse;
-import com.devrobin.locationservice.utils.Credentials;
 import com.devrobin.locationservice.RetrofiteServices.LocationAPIServices;
 
 import java.util.List;
@@ -19,6 +18,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LocationRepository {
+
+    //API KEY
+    private static final String API_KEY = "adb5315b18d7c27855ceca58b4519731";
+
 
     private LocationDAO locationDAO;
     private LocationAPIServices locationAPIServices;
@@ -36,9 +39,13 @@ public class LocationRepository {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                long id = locationDAO.insertLocation(locationData);
 
-                fetchWeather((int) id, locationData.getLatitude(), locationData.getLongitude());
+                try {
+                    long id = locationDAO.insertLocation(locationData);
+                    fetchWeather((int) id, locationData.getLatitude(), locationData.getLongitude());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -46,7 +53,7 @@ public class LocationRepository {
     //Fetch Weather data from openWeather
     private void fetchWeather(int locId, double latitude, double longitude) {
 
-        if (Credentials.API_KEY.equals("adb5315b18d7c27855ceca58b4519731")){
+        if (API_KEY.equals("adb5315b18d7c27855ceca58b4519731")){
             Log.w("Tag", "API is not configured skipping fetch data");
             return;
         }
@@ -58,7 +65,7 @@ public class LocationRepository {
         }
 
         //Make API call
-        Call<WeatherResponse> call = locationAPIServices.getLocations(latitude, longitude, Credentials.API_KEY, "metric");
+        Call<WeatherResponse> call = locationAPIServices.getLocations(latitude, longitude, API_KEY, "metric");
 
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
@@ -83,7 +90,7 @@ public class LocationRepository {
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-
+                Log.e("Tag", "Weather API call failed" + t.getMessage(), t);
             }
         });
     }
@@ -94,36 +101,38 @@ public class LocationRepository {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
+                try {
+                    LocationData locations = locationDAO.getLocationById(locId);
 
-                LocationData locations = locationDAO.getLocationById(locId);
+                    if (locations != null){
 
-                if (locations != null){
+                        //Get Weather data
+                        if (weatherResponse.getWeathers() != null && !weatherResponse.getWeathers().isEmpty()){
+                            String description = weatherResponse.getWeathers().get(0).getWeather_description();
+                            locations.setWeatherDesc(description);
+                        }
 
-                    //Get Weather data
-                    if (weatherResponse.getWeathers() != null && !weatherResponse.getWeathers().isEmpty()){
-                        String description = weatherResponse.getWeathers().get(0).getWeather_description();
-                        locations.setWeatherDesc(description);
+                        //Get temp and humidity
+                        if (weatherResponse.getMain() != null){
+
+                            double temp = weatherResponse.getMain().getTemp();
+                            int humidity = weatherResponse.getMain().getHumidity();
+
+                            locations.setTemperature(String.format("%.1fC", temp));
+                            locations.setHumidity(humidity + "%");
+                        }
+
+                        //Update Database
+                        locationDAO.updateLocation(locations);
 
                     }
-
-                    //Get temp and humidity
-                    if (weatherResponse.getMain() != null){
-
-                        double temp = weatherResponse.getMain().getTemp();
-                        int humidity = weatherResponse.getMain().getHumidity();
-
-                        locations.setTemperature(String.format("%.1fC", temp));
-                        locations.setHumidity(humidity + "%");
+                    else {
+                        Log.e("Tag", "Location not find by id" + locId);
                     }
 
-                    //Update Database
-                    locationDAO.updateLocation(locations);
-
+                } catch (Exception e) {
+                    Log.e("Tag", "Error updating weather: " + e.getMessage());
                 }
-                else {
-                    Log.e("Tag", "Location not find by id" + locId);
-                }
-
             }
         });
 

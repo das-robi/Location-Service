@@ -38,24 +38,26 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
 
         LocationData locationData = locationList.get(position);
 
+
         holder.placeName.setText(locationData.getPlaceName());
 
         //Make String
         String coordinates = String.format(Locale.getDefault(),
-                "Lat: %.6f, Lon: %.6f : Accuracy: %.0fm",
+                "Lat: %.4f, Lon: %.4f : Accuracy: %.0fm",
                 locationData.getLatitude(),
                 locationData.getLongitude(),
                 locationData.getAccuracy());
 
+        holder.coordinators.setText(coordinates);
 
         //Date and time
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy, hh : mm : ss a", Locale.getDefault());
-        String date = dateFormat.format(new Date(locationData.getTimestamp()));
-        holder.timeDate.setText(date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm:ss a", Locale.getDefault());
+        String dateTime = dateFormat.format(new Date(locationData.getTimestamp()));
+        holder.timeDate.setText(dateTime);
 
         //Weather info
         String weatherInfo;
-        if (locationData.getWeatherDesc() != null && !locationData.getWeatherDesc().isEmpty()){
+        if (locationData.getWeatherDesc() != null && locationData.getTemperature() != null){
             weatherInfo = String.format("%s %s Humidity: %s",
                     locationData.getWeatherDesc(),
                     locationData.getTemperature(),
@@ -76,13 +78,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
 
     public class LocationViewHolder extends RecyclerView.ViewHolder{
 
-        TextView placeName, timeDate, coordinates, weather;
+        TextView placeName, timeDate, coordinators, weather;
 
         public LocationViewHolder(@NonNull View itemView) {
             super(itemView);
 
             placeName = itemView.findViewById(R.id.tvPlaceName);
-            coordinates = itemView.findViewById(R.id.tvCoordinates);
+            coordinators = itemView.findViewById(R.id.tvCoordinates);
             timeDate = itemView.findViewById(R.id.tvTime);
             weather = itemView.findViewById(R.id.tvWeather);
 
