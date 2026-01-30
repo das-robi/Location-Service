@@ -1,5 +1,7 @@
 package com.devrobin.locationservice;
 
+import android.nfc.Tag;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +40,6 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
 
         LocationData locationData = locationList.get(position);
 
-
         holder.placeName.setText(locationData.getPlaceName());
 
         //Make String
@@ -58,13 +59,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         //Weather info
         String weatherInfo;
         if (locationData.getWeatherDesc() != null && locationData.getTemperature() != null){
-            weatherInfo = String.format("%s %s Humidity: %s",
+            weatherInfo = String.format("%s,  %s,  Humidity: %s ",
                     locationData.getWeatherDesc(),
                     locationData.getTemperature(),
                     locationData.getHumidity());
         }
         else {
-            weatherInfo = "Loading...";
+            weatherInfo = "Weather Loading...";
         }
 
         holder.weather.setText(weatherInfo);
@@ -89,6 +90,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
             weather = itemView.findViewById(R.id.tvWeather);
 
         }
+
     }
 
 }

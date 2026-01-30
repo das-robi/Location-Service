@@ -15,17 +15,16 @@ public class RetrofitClient {
     public static Retrofit getClient() {
     if (retrofit == null) {
 
-        // OkHttp client with timeouts and logging
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
+//        // OkHttp client with timeouts and logging
+//        OkHttpClient client = new OkHttpClient.Builder()
+//                .connectTimeout(30, TimeUnit.SECONDS)
+//                .readTimeout(30, TimeUnit.SECONDS)
+//                .writeTimeout(30, TimeUnit.SECONDS)
+//                .build();
 
         // Build Retrofit instance
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

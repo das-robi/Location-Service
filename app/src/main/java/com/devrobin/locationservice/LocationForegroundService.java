@@ -37,6 +37,8 @@ import java.util.Locale;
 
 public class LocationForegroundService extends Service {
 
+    private static final String TAG = "FOREGROUND_SERVICE";
+
     private static final String CHANNEL_ID = "Location Service";
     private static final int NOTIFICATION_ID = 100;
 
@@ -72,34 +74,13 @@ public class LocationForegroundService extends Service {
         return START_STICKY;
     }
 
-    public void createLocationCallback(){
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-
-                if (locationResult == null){
-                    return;
-                }
-
-                Location location = locationResult.getLastLocation();
-                if (location != null){
-                    handleLocationUpdate(location);
-                }
-
-            }
-        };
-
-    }
-
-
 
     private void startLocationUpdates() {
 
         //CheckPermission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            Log.d("Tag", "Location Permission not Granted");
+            Log.d(TAG, "Location Permission not Granted");
             stopSelf();
             return;
         }
@@ -123,6 +104,27 @@ public class LocationForegroundService extends Service {
 
         UpdateNotification("Tracking your location..");
     }
+
+    public void createLocationCallback(){
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+
+                if (locationResult == null){
+                    return;
+                }
+
+                Location location = locationResult.getLastLocation();
+                if (location != null){
+                    handleLocationUpdate(location);
+                }
+
+            }
+        };
+
+    }
+
 
     private void handleLocationUpdate(Location location) {
 
@@ -211,11 +213,11 @@ public class LocationForegroundService extends Service {
             }
 
         } catch (IOException e) {
-            Log.e("Tag", "Geocoder Error" + e.getMessage());
+            Log.e(TAG, "Geocoder Error" + e.getMessage());
             placeName = "Unknown Location";
         }
         catch (IllegalArgumentException e){
-            Log.e("Tag", "Invalid Coordinates" + e.getMessage());
+            Log.e(TAG, "Invalid Coordinates" + e.getMessage());
             placeName = "Invalid Location";
         }
 

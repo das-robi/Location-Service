@@ -7,7 +7,7 @@ import java.util.List;
 public class WeatherResponse {
 
     @SerializedName("weather")
-    private List<Weather> weathers;
+    private List<Weather> weather;
 
     @SerializedName("main")
     private Main main;
@@ -22,8 +22,8 @@ public class WeatherResponse {
     private String message;
 
     //Getters
-    public List<Weather> getWeathers() {
-        return weathers;
+    public List<Weather> getWeather() {
+        return weather;
     }
 
     public Main getMain() {
@@ -49,23 +49,23 @@ public class WeatherResponse {
         private int id;
 
         @SerializedName("main")
-        private int main;
+        private String main;
 
         @SerializedName("description")
-        private String weather_description;
+        private String description;
 
         //Getters and Setters
         public int getId() {
             return id;
         }
 
-        public int getMain() {
+        public String getMain() {
             return main;
         }
 
 
-        public String getWeather_description() {
-            return weather_description;
+        public String getDescription() {
+            return description;
         }
 
 

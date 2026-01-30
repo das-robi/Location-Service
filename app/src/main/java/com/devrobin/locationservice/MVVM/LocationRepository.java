@@ -19,8 +19,10 @@ import retrofit2.Response;
 
 public class LocationRepository {
 
+    private static final String TAG = "LOCATION_REPOSITORY";
+
     //API KEY
-    private static final String API_KEY = "adb5315b18d7c27855ceca58b4519731";
+    private static final String WEATHER_API_KEY = "d8996a21eae65193e982a50fc5187dc7";
 
 
     private LocationDAO locationDAO;
@@ -41,8 +43,10 @@ public class LocationRepository {
             public void run() {
 
                 try {
-                    long id = locationDAO.insertLocation(locationData);
-                    fetchWeather((int) id, locationData.getLatitude(), locationData.getLongitude());
+                    long locId = locationDAO.insertLocation(locationData);
+                    Log.d(TAG, "Location Inserted with id " + locId);
+
+                    fetchWeather((int) locId, locationData.getLatitude(), locationData.getLongitude());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -53,44 +57,48 @@ public class LocationRepository {
     //Fetch Weather data from openWeather
     private void fetchWeather(int locId, double latitude, double longitude) {
 
-        if (API_KEY.equals("adb5315b18d7c27855ceca58b4519731")){
-            Log.w("Tag", "API is not configured skipping fetch data");
+        if (WEATHER_API_KEY.equals("YOUR_API_KEY_HERE")){
+            Log.w(TAG, "API is not configured skip fetch data");
             return;
         }
 
-        //Invalid Coordinates
+        Log.d(TAG, "Fetching weather for location: " + latitude + ", " + longitude);
+
+//        Invalid Coordinates
         if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180){
-            Log.d("Tag", "Coordinates: " + latitude + longitude);
+            Log.d(TAG, "Coordinates: " + latitude + longitude);
             return;
         }
 
         //Make API call
-        Call<WeatherResponse> call = locationAPIServices.getLocations(latitude, longitude, API_KEY, "metric");
+        Call<WeatherResponse> call = locationAPIServices.getWeathers(latitude, longitude, WEATHER_API_KEY, "metric");
 
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
 
                 if (response.isSuccessful() && response.body() != null){
+
                     WeatherResponse weatherResponse = response.body();
 
                     if (weatherResponse.getCod() == 200){
                         UpdateDataWithLocationEntity(locId, weatherResponse);
+                        Log.d(TAG, "Weather data fetched successfully");
                     }
                     else {
-                        Log.d("Tag", "API is error" + weatherResponse.getMessage());
+                        Log.e(TAG, "API is error" + weatherResponse.getMessage());
                     }
 
                 }
                 else {
-                    Log.d("Tag", "API call failed" + response.code());
+                    Log.d(TAG, "API call failed" + response.code());
                 }
 
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Log.e("Tag", "Weather API call failed" + t.getMessage(), t);
+                Log.e(TAG, "Weather API call failed" + t.getMessage(), t);
             }
         });
     }
@@ -107,9 +115,10 @@ public class LocationRepository {
                     if (locations != null){
 
                         //Get Weather data
-                        if (weatherResponse.getWeathers() != null && !weatherResponse.getWeathers().isEmpty()){
-                            String description = weatherResponse.getWeathers().get(0).getWeather_description();
+                        if (weatherResponse.getWeather() != null && !weatherResponse.getWeather().isEmpty()){
+                            String description = weatherResponse.getWeather().get(0).getDescription();
                             locations.setWeatherDesc(description);
+                            Log.d(TAG, "Weather description: " + description);
                         }
 
                         //Get temp and humidity
@@ -127,11 +136,11 @@ public class LocationRepository {
 
                     }
                     else {
-                        Log.e("Tag", "Location not find by id" + locId);
+                        Log.e(TAG, "Location not find by id" + locId);
                     }
 
                 } catch (Exception e) {
-                    Log.e("Tag", "Error updating weather: " + e.getMessage());
+                    Log.e(TAG, "Error updating weather: " + e.getMessage());
                 }
             }
         });

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Widgets
     private Button btnStart, btnStop, btnClear;
-    private TextView tvStatus, tvLatest, tvWeather;
+    private TextView tvStatus, tvLatestLocations, tvWeather;
     private RecyclerView recyclerView;
 
     private LocationAdapter locationAdapter;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         btnStop = findViewById(R.id.btnStop);
         btnClear = findViewById(R.id.btnClear);
         tvStatus = findViewById(R.id.tvStatus);
-        tvLatest = findViewById(R.id.tvLatest);
+        tvLatestLocations = findViewById(R.id.tvLatestLocations);
         recyclerView = findViewById(R.id.recyclerView);
         tvWeather = findViewById(R.id.tvWeather);
 
@@ -160,11 +160,11 @@ public class MainActivity extends AppCompatActivity {
                     //Date & time
                     data.append(dateFormat.format(new Date(locationData.getTimestamp())));
 
-                    tvLatest.setText(data.toString());
+                    tvLatestLocations.setText(data.toString());
                     Log.d("Tag", "Latest Location " + locationData.getPlaceName());
                 }
                 else {
-                    tvLatest.setText("No recorded Location \n\n Tracking Latest Location and update");
+                    tvLatestLocations.setText("No recorded Location \n\n Tracking Latest Location and update");
                 }
 
             }
